@@ -1,7 +1,13 @@
+//- vim: tabstop=2:shiftwidth=2:softtabstop=2:expandtab
 doctype html
 html
   head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
     title= title
+    block custhead
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     block content
+    block custscript
