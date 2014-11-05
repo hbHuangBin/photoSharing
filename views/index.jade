@@ -18,39 +18,40 @@ block content
 
       div#ps_navbar_collapse(class=["collapse","navbar-collapse"])
         ul(class=["nav","navbar-nav"])
-          li(class="active")
-            a(href="#") Flow
-          li
-            a(href="#") Following
+          li: a(href="#") Interesting
+          li(class="active"): a(href="#") Flow
+          li: a(href="#") Following
           li(class="dropdown")
             a.dropdown-toggle(data-toggle="dropdown",href="#") Groups
               span.caret
             ul.dropdown-menu(role="menu")
-              li
-                a(href="#") Interest Group 1
-              li
-                a(href="#") Interest Group 2
+              li: a(href="#") Interest Group 1
+              li: a(href="#") Interest Group 2
         ul(class=["nav","navbar-nav","navbar-right"])
           li(class="dropdown")
-            a.dropdown-toggle(data-toggle="dropdown",href="#") User
+            a.dropdown-toggle(data-toggle="dropdown",href="javascript:void(0)") User
               span.caret
             ul.dropdown-menu(role="menu")
-              li
-                a(href="#") Profile
+              li: a(href="#") Profile
               li.divider
-              li
-                a(href="#") Albums
-              li
-                a(href="#") Interest Groups
-              li
-                a(href="#") Followings
+              li: a(href="#") Albums
+              li: a(href="#") Interest Groups
+              li: a(href="#") Followings
               li.divider
-              li
-                a(href="#") Sign Out
-          li
-            a(href="#") Upload
+              li: a(href="#") Sign Out
+          li: a(href="#")#nav_upload Upload
+
+  //- Content Area
+  div.container-fluid#main_cont
+    h1 test title
+    p test content
 
 block custscript
   script(type="text/javascript", src="/lib/jquery/jquery-1.11.1.min.js")
   script(type="text/javascript", src="/lib/bootstrap/3.3.0/js/bootstrap.min.js")
   script(type="text/javascript", src="/lib/dropzone/3.10.2/dropzone.js")
+  script(type="text/javascript").
+    // page configuration
+    Dropzone.autoDiscover = false;
+  script(type="text/javascript", src="/app/main.js")
+
