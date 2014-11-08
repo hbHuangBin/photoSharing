@@ -1,28 +1,23 @@
 
 var PS = {
 	initNavbar: function() {
-		$("#nav_upload").on("click", function(evt) {
-			evt.preventDefault();
-			PS.switchContent("upload");
+		$("nav a.pjaxable").click(function(evt) {
+			$("nav ul.nav > li").removeClass("active");
+			$(this).parentsUntil("ul.nav", "li").not(function() {
+				return !($(this).parent().hasClass("nav"));
+			}).addClass("active");
 		});
+		$(document).pjax("nav a.pjaxable", "#main_cont");
 	},
-	switchContent: function(name) {
-		switch (name) {
-			case "upload": {
-				$("#main_cont").empty();
-				/* XXX: for now create the html in js */
-				$("#main_cont").html('<div id="upload_block" class="upload_zone">click to upload</div>');
-				var uploadDz = new Dropzone("#upload_block", {
-					url: "/upload/upload-image",
-					autoProcessQueue: false
-				});
-				break;
-			}
-		}
+
+	initPjaxEvent: function() {
+		$(document).on("pjax:success", function(evt, data, status, xhr, options) {
+		});
 	}
 };
 
 $(document).ready(function() {
 	PS.initNavbar();
+	PS.initPjaxEvent();
 });
 

@@ -14,44 +14,54 @@ block content
           span.icon-bar
           span.icon-bar
           span.icon-bar
-        a.navbar-brand(href="#") PS
+        a.navbar-brand(href="/") PS
 
       div#ps_navbar_collapse(class=["collapse","navbar-collapse"])
         ul(class=["nav","navbar-nav"])
-          li: a(href="#") Interesting
-          li(class="active"): a(href="#") Flow
-          li: a(href="#") Following
+          li: a(href="/interesting",class="pjaxable") Interesting
+          li(class="active"): a(href="/flow",class="pjaxable") Flow
+          li: a(href="/following",class="pjaxable") Following
           li(class="dropdown")
-            a.dropdown-toggle(data-toggle="dropdown",href="#") Groups
+            a.dropdown-toggle(data-toggle="dropdown",href="javascript:void(0)") Groups
               span.caret
             ul.dropdown-menu(role="menu")
-              li: a(href="#") Interest Group 1
-              li: a(href="#") Interest Group 2
+              li: a(href="/ig/1",class="pjaxable") Interest Group 1
+              li: a(href="/ig/2",class="pjaxable") Interest Group 2
+              li: a(href="/ig",class="pjaxable") More
         ul(class=["nav","navbar-nav","navbar-right"])
           li(class="dropdown")
-            a.dropdown-toggle(data-toggle="dropdown",href="javascript:void(0)") User
+            a.dropdown-toggle(data-toggle="dropdown",href="javascript:void(0)")
+              span(class=["glyphicon","glyphicon-user"])
+              = " User "
               span.caret
             ul.dropdown-menu(role="menu")
-              li: a(href="#") Profile
+              li: a(href="/user/profile",class="pjaxable") Profile
               li.divider
-              li: a(href="#") Albums
-              li: a(href="#") Interest Groups
-              li: a(href="#") Followings
+              li: a(href="/user/albums",class="pjaxable") Albums
+              li: a(href="/user/ig",class="pjaxable") Interest Groups
+              li: a(href="/user/following",class="pjaxable") Followings
               li.divider
-              li: a(href="#") Sign Out
-          li: a(href="#")#nav_upload Upload
+              li: a(href="/signout") Sign Out
+          li
+            a(href="/upload",class="pjaxable")
+              span(class=["glyphicon","glyphicon-upload"])
+              = " Upload"
 
   //- Content Area
   div.container-fluid#main_cont
-    h1 test title
-    p test content
+    block index-main_cont
+      h1 No contents provided
 
 block custscript
   script(type="text/javascript", src="/lib/jquery/jquery-1.11.1.min.js")
+  script(type="text/javascript", src="/lib/jquery/jquery.pjax.js")
   script(type="text/javascript", src="/lib/bootstrap/3.3.0/js/bootstrap.min.js")
   script(type="text/javascript", src="/lib/dropzone/3.10.2/dropzone.js")
   script(type="text/javascript").
     // page configuration
     Dropzone.autoDiscover = false;
+
+    $.pjax.defaults.timeout = 15000;
+    $.pjax.defaults.fragment = "div.pjax_body";
   script(type="text/javascript", src="/app/main.js")
 
