@@ -1,6 +1,25 @@
 //- vim: tabstop=2:shiftwidth=2:softtabstop=2:expandtab
-div.pjax_head
-  title Upload Photos
-div.pjax_body
-  h1 Upload text
-  p TODO
+div.pjax_root
+  div.pjax_head
+    title Upload Photos
+  div.pjax_body
+    div.row
+      div.col-md-7
+        div.ps_upload_control
+          button(type="button",class=["btn","btn-primary","btn-sm","ps_btn_add"])
+            span(class=["glyphicon","glyphicon-plus"])
+            = " Add More "
+            span.badge 0
+      div.col-md-5
+        div.ps_upload_control
+          button(type="button",class=["btn","btn-success","btn-sm","pull-right","ps_btn_upload"])
+            span(class=["glyphicon","glyphicon-upload"])
+            = " Start Uploading"
+    div.row
+      div.col-md-12
+        div.ps_upload_zone
+          div.ps_upload_zone_ins
+            button(type="button",class=["btn","btn-primary","btn-lg","btn-block","ps_btn_add"])
+              span(class=["glyphicon","glyphicon-plus"])
+              = " Click or Drop Photos"
+            div.ps_assist_ins_lg Drag and drop photos from your folder into this dashed area

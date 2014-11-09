@@ -3,7 +3,34 @@ body {
 	padding: 50px 0px 0px;
 }
 
-.upload_zone {
+.ps_upload_control {
+	padding: 10px 0px;
+}
+
+.ps_upload_zone {
 	width: auto;
 	height: 400px;
+	border: 2px dashed #999;
+	position: relative;
+}
+.ps_upload_zone_ins {
+	margin: auto;
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	width: 270px;
+	height: 100px;
+	overflow: visible;
+}
+
+.ps_assist_ins_lg {
+	font-size: 15.7px;
+	color: #777;
+	font-weight: 400;
+	line-height: 26.4px;
+	margin-top: 4px;
+}
+
+.dz-drag-hover {
+	border-color: #222;
+	box-shadow: 0px 0px 40px 0px #999 inset;
 }
