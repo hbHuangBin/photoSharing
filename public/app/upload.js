@@ -11,6 +11,12 @@ window[PS.modPrefix + "upload"] = {
 		});
 	},
 
+	initPage: function() {
+		/* called when upload page is loaded directly instead of via PJAX */
+		this.initUploadZone();
+		this.initEvents();
+	},
+
 	uploadZone: null,
 
 	initUploadZone: function() {

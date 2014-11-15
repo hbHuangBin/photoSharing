@@ -26,6 +26,12 @@ var PS = {
 				}
 			}).attr("src", elem.path);
 		});
+
+		$(document).on("ps:modulesInited", function(evt) {
+			if (window.callModuleId && callModuleId.length > 0) {
+				that[callModuleId].initPage();
+			}
+		});
 	},
 
 	initNavbar: function() {

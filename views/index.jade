@@ -18,10 +18,10 @@ block content
 
       div#ps_navbar_collapse(class=["collapse","navbar-collapse"])
         ul(class=["nav","navbar-nav"])
-          li: a(href="/interesting",class="pjaxable") Interesting
-          li(class="active"): a(href="/flow",class="pjaxable") Flow
-          li: a(href="/following",class="pjaxable") Following
-          li(class="dropdown")
+          li(class=(activeNav==='interesting'?'active':'')): a(href="/interesting",class="pjaxable") Interesting
+          li(class=(activeNav==='flow'?'active':'')): a(href="/flow",class="pjaxable") Flow
+          li(class=(activeNav==='following'?'active':'')): a(href="/following",class="pjaxable") Following
+          li(class=(activeNav==='ig'?'active':''),class="dropdown")
             a.dropdown-toggle(data-toggle="dropdown",href="javascript:void(0)") Groups
               span.caret
             ul.dropdown-menu(role="menu")
@@ -29,7 +29,7 @@ block content
               li: a(href="/ig/2",class="pjaxable") Interest Group 2
               li: a(href="/ig",class="pjaxable") More
         ul(class=["nav","navbar-nav","navbar-right"])
-          li(class="dropdown")
+          li(class=(activeNav==='user'?'active':''),class="dropdown")
             a.dropdown-toggle(data-toggle="dropdown",href="javascript:void(0)")
               span(class=["glyphicon","glyphicon-user"])
               = " User "
@@ -42,7 +42,7 @@ block content
               li: a(href="/user/following",class="pjaxable") Followings
               li.divider
               li: a(href="/signout") Sign Out
-          li
+          li(class=(activeNav==='upload'?'active':''))
             a(href="/upload",class="pjaxable",data-pjaxid="upload")
               span(class=["glyphicon","glyphicon-upload"])
               = " Upload"
@@ -50,7 +50,10 @@ block content
   //- Content Area
   div.container-fluid#main_cont
     block index-main_cont
-      h1 No contents provided
+      if pageHtml
+        |!{pageHtml}
+      else
+        h1 No contents provided
 
 block custscript
   script(type="text/javascript", src="/lib/jquery/jquery-1.11.1.min.js")
@@ -63,5 +66,7 @@ block custscript
 
     $.pjax.defaults.timeout = 15000;
     $.pjax.defaults.fragment = "div.pjax_body";
+
+    var callModuleId = '#{callModuleId}';
   script(type="text/javascript", src="/app/main.js")
 
