@@ -1,3 +1,6 @@
+var path = require('path');
+global.serverRoot = path.join(__dirname);
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');

@@ -7,6 +7,7 @@ window[PS.modPrefix + "upload"] = {
 
 		$(document).on("ps:pjaxReady:upload", function(evt, options) {
 			that.initUploadZone();
+			that.initEvents();
 		});
 	},
 
@@ -17,12 +18,34 @@ window[PS.modPrefix + "upload"] = {
 			url: "/upload/doUpload",
 			paramName: "photo",
 			uploadMultiple: false,
+			parallelUploads: 3,
 			autoProcessQueue: false,
 			clickable: "#main_cont button.ps_btn_add",
 			addRemoveLinks: true
 		});
 
 		this.uploadZone = uploadZone;
+
+		uploadZone.on('addedfile', function(file) {
+			$('#main_cont div.ps_upload_zone_ins').hide();
+			$('#main_cont button.ps_btn_add span.badge').text(uploadZone.files.length.toString());
+		});
+		uploadZone.on('removedfile', function(file) {
+			if (uploadZone.files.length <= 0) {
+				$('#main_cont div.ps_upload_zone_ins').show();
+			}
+			$('#main_cont button.ps_btn_add span.badge').text(uploadZone.files.length.toString());
+		});
+	},
+
+	initEvents: function() {
+		var that = this;
+
+		$("#main_cont button.ps_btn_upload").click(function(evt) {
+			$(this).prop('disabled', true);
+
+			that.uploadZone.processQueue();
+		});
 	}
 };
 
