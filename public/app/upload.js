@@ -19,6 +19,29 @@ window[PS.modPrefix + "upload"] = {
 
 	uploadZone: null,
 
+	previewTemplate: '<div class="dz-preview dz-image-preview col-md-3 col-xs-6">' +
+						'<div class="thumbnail">' +
+							'<div class="dz-details">' +
+								'<div class="dz-details-text">' +
+									'<div class="dz-filename"><span data-dz-name></span></div>' +
+									'<div class="dz-size" data-dz-size></div>' +
+								'</div>' +
+								'<img class="dz-thumbnail" data-dz-thumbnail />' +
+							'</div>' +
+							'<div class="dz-progress">' +
+								'<div class="progress">' +
+									'<div class="progress-bar progress-bar-striped" role="progressbar" style="width: 0;" data-dz-uploadprogress>' +
+										'<span class="dz-upload-text">0%</span>' +
+									'</div>' +
+								'</div>' +
+							'</div>' +
+							'<div class="dz-remove">' +
+								'<button type="button" class="close" data-dz-remove><span>&times;</span></button>' +
+							'</div>' +
+							'<div class="dz-error-message"><span data-dz-errormessage></span></div>' +
+						'</div>' +
+					'</div>',
+
 	initUploadZone: function() {
 		var uploadZone = new Dropzone("#main_cont div.ps_upload_zone", {
 			url: "/upload/doUpload",
@@ -27,7 +50,10 @@ window[PS.modPrefix + "upload"] = {
 			parallelUploads: 3,
 			autoProcessQueue: false,
 			clickable: "#main_cont button.ps_btn_add",
-			addRemoveLinks: true
+			previewsContainer: "#main_cont div.ps_upload_zone_main_row",
+			previewTemplate: this.previewTemplate,
+			thumbnailWidth: 300,
+			thumbnailHeight: null
 		});
 
 		this.uploadZone = uploadZone;
@@ -41,6 +67,18 @@ window[PS.modPrefix + "upload"] = {
 				$('#main_cont div.ps_upload_zone_ins').show();
 			}
 			$('#main_cont button.ps_btn_add span.badge').text(uploadZone.files.length.toString());
+		});
+		uploadZone.on('uploadprogress', function(file, percentage) {
+			$(file.previewElement).find('span.dz-upload-text').text(percentage + '%');
+			if (percentage >= 100) {
+				$(file.previewElement).find('div.dz-remove').hide();
+			}
+		});
+		uploadZone.on('complete', function(file) {
+			if (uploadZone.getQueuedFiles().length > 0) {
+				console.log('still has %d to be uploaded', uploadZone.getQueuedFiles().length);
+				uploadZone.processQueue();
+			}
 		});
 	},
 

@@ -10,7 +10,7 @@ function getTmpUploadDir() {
 }
 
 function uploadPrepare(req, res) {
-	req.files = req.files || [];
+	req.files = [];
 	req.files.completeNum = 0;
 
 	var dir = getTmpUploadDir();
@@ -20,7 +20,7 @@ function uploadPrepare(req, res) {
 }
 
 function uploadComplete(req, res) {
-	if (req.files) {
+	if (req.files && req.files.length > 0) {
 		/* TODO: consequent processing */
 		res.json({success: true});
 	}
