@@ -1,4 +1,6 @@
 var path = require('path');
+
+/* set server root dir for all module using */
 global.serverRoot = path.join(__dirname);
 
 var express = require('express');
@@ -8,11 +10,15 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var busboy = require('connect-busboy');
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
 
+/* get all routers */
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var uploadRt = require('./routes/upload');
 
+/* create the express application */
 var app = express();
 
 // view engine setup
@@ -22,12 +28,23 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
+
+/* setup and apply session management */
+app.use(session({
+	store: new RedisStore({host: 'localhost', port: 6379}),
+	secret: 'beautiful girl',
+	resave: false,
+	saveUninitialized: false
+}));
+
+/* other middlewares */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(busboy());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+/* apply router policies */
 app.use('/', routes);
 app.use('/users', users);
 app.use('/upload', uploadRt);
