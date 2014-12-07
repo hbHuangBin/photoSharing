@@ -1,0 +1,29 @@
+//- vim: tabstop=2:shiftwidth=2:softtabstop=2:expandtab
+extends layout
+
+block custhead
+  link(rel='stylesheet', href='/lib/bootstrap/3.3.0/css/bootstrap.min.css')
+  link(rel='stylesheet', href='/stylesheets/login.css')
+
+block content
+  div#main_cont
+    div.container-fluid#login_cont
+      div#login_inner_cont
+        div.login_panel
+          div.login_form_cont
+            form.form-horizontal(role="form")
+              div.form-group
+                label(for="username",class=['control-label','col-sm-4','shadow_text']) User Name
+                div.col-sm-8
+                  input.form-control(type="text",id="username",name="username",placeholder="User Name",autocomplete="off")
+              div.form-group
+                label(for="password",class=['control-label','col-sm-4','shadow_text']) Password
+                div.col-sm-8
+                  input.form-control(type="password",id="password",name="password",placeholder="Password")
+              div.form-group
+                div.col-sm-offset-4.col-sm-8
+                  button(type="button",class=["btn","btn-info"]) Sign In
+
+block custscript
+  script(type="text/javascript", src="/lib/jquery/jquery-1.11.1.min.js")
+  script(type="text/javascript", src="/lib/bootstrap/3.3.0/js/bootstrap.min.js")

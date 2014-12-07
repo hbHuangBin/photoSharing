@@ -2,3 +2,7 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
+.shadow_text {
+	text-shadow: #F0F0F0 0px 1px 1px;
+}

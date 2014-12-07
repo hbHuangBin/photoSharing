@@ -1,0 +1,32 @@
+#main_cont {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	overflow: hidden;
+	background-color: #111;
+	background-image: url('/images/login-glance.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+#login_cont {
+	height: 100%;
+}
+#login_inner_cont {
+	height: 100%;
+	position: relative;
+}
+
+.login_panel {
+	margin: auto;
+	position: absolute;
+	z-index: 100;
+	top: 0; bottom: 0;
+	right: 13%;
+	width: 400px;
+	height: 200px;
+}
+
+.login_form_cont input.form-control {
+	background-color: rgba(255, 255, 255, 0.6);
+}

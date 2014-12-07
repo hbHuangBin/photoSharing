@@ -14,8 +14,9 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 
 /* get all routers */
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var indexRt = require('./routes/index');
+var loginRt = require('./routes/login');
+var usersRt = require('./routes/users');
 var uploadRt = require('./routes/upload');
 
 /* create the express application */
@@ -34,8 +35,21 @@ app.use(session({
 	store: new RedisStore({host: 'localhost', port: 6379}),
 	secret: 'beautiful girl',
 	resave: false,
-	saveUninitialized: false
+	saveUninitialized: false,
+	cookie: {
+		path: '/',
+		httpOnly: true,
+		secure: false,
+		maxAge: 365 * 24 * 3600 * 1000
+	}
 }));
+app.use(function(req, res, next) {
+	/* in case session is not initialized when connection is lost */
+	if (!req.session) {
+		next(new Error('Session is temporarily unavaliable'));
+	}
+	else { next(); }
+});
 
 /* other middlewares */
 app.use(bodyParser.json());
@@ -45,8 +59,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* apply router policies */
-app.use('/', routes);
-app.use('/users', users);
+app.use('/', indexRt);
+app.use('/login', loginRt);
+app.use('/users', usersRt);
 app.use('/upload', uploadRt);
 
 // catch 404 and forward to error handler
@@ -56,7 +71,7 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handlers
+/* error handlers */
 
 // development error handler
 // will print stacktrace
