@@ -1,4 +1,5 @@
 node_modules/
+/config.json
 
 # ignore those project files
 /cscope.*

@@ -1,9 +1,5 @@
-var path = require('path');
-
-/* set server root dir for all module using */
-global.serverRoot = path.join(__dirname);
-
 var express = require('express');
+var nconf = require('nconf');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -32,7 +28,10 @@ app.use(logger('dev'));
 
 /* setup and apply session management */
 app.use(session({
-	store: new RedisStore({host: 'localhost', port: 6379}),
+	store: new RedisStore({
+		host: nconf.get('redis').host,
+		port: nconf.get('redis').port
+	}),
 	secret: 'beautiful girl',
 	resave: false,
 	saveUninitialized: false,
