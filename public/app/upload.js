@@ -44,7 +44,7 @@ window[PS.modPrefix + "upload"] = {
 
 	initUploadZone: function() {
 		var uploadZone = new Dropzone("#main_cont div.ps_upload_zone", {
-			url: "/upload/doUpload",
+			url: "/res/",
 			paramName: "photo",
 			uploadMultiple: false,
 			parallelUploads: 3,

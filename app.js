@@ -12,8 +12,10 @@ var RedisStore = require('connect-redis')(session);
 /* get all routers */
 var indexRt = require('./routes/index');
 var loginRt = require('./routes/login');
-var usersRt = require('./routes/users');
 var uploadRt = require('./routes/upload');
+/* REST routers */
+var rest_resRt = require('./routes/rest/res');
+var rest_usersRt = require('./routes/rest/users');
 
 /* create the express application */
 var app = express();
@@ -58,10 +60,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* apply router policies */
-app.use('/', indexRt);
 app.use('/login', loginRt);
-app.use('/users', usersRt);
+/* TODO: add session check middleware here */
+/* routers below require logged-in user session */
+app.use('/', indexRt);
 app.use('/upload', uploadRt);
+app.use('/res', rest_resRt);
+app.use('/users', rest_usersRt);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
