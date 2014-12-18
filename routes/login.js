@@ -16,8 +16,8 @@ router.get('/', function(req, res) {
 
 	/* no need to do login again for loggedIn user */
 	if (sess.loginStatus === LoginStatus.LOGGEDIN) {
-		res.redirect('/');
-		return;
+		//res.redirect('/');
+		//return;
 	}
 
 	/* for new attempting login user we generate the session, otherwise reuse it */
@@ -38,7 +38,51 @@ router.get('/', function(req, res) {
 
 /* perform login sign in action */
 router.post('/signin', function(req, res) {
-	/* TODO: sign in with credential */
+	/* sign in with credential */
+	var username = req.body.user;
+	var password = req.body.pw;
+	var authRes = null;
+
+	if (!username || !password) {
+		res.status(400).json({
+			success: false,
+			msg: "Insufficient credential"
+		});
+		return;
+	}
+
+	req.session.loginStatus = LoginStatus.LOGGING;
+
+	/* XXX: only for development, authentication should be in separated module */
+	if (username === "testuser" && password === "password") {
+		authRes = { success: true };
+	}
+	else {
+		authRes = {
+			success: false,
+			msg: "Auth failed"
+		};
+	}
+
+	if (authRes.success === true) {
+		req.session.loginStatus = LoginStatus.AUTHENTICATED;
+
+		/* TODO: prepare for a logged in user */
+
+		/* now the user is logged in */
+		req.session.loginStatus = LoginStatus.LOGGEDIN;
+
+		res.json({
+			success: true,
+			next: "/"
+		});
+	}
+	else {
+		res.json({
+			success: false,
+			msg: authRes.msg ? authRes.msg : "Invalid username or password!"
+		});
+	}
 });
 
 module.exports = router;

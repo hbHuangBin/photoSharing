@@ -22,8 +22,14 @@ block content
                   input.form-control(type="password",id="password",name="password",placeholder="Password")
               div.form-group
                 div.col-sm-offset-4.col-sm-8
-                  button(type="button",class=["btn","btn-info"]) Sign In
+                  button(type="button",id="signinBtn",class=["btn","btn-info"]) Sign In
+                  span(id="signinLoader",style="display: none;")
+                    img(src="/images/svg/ball-triangle.svg")
+              div.form-group
+                div.col-sm-offset-4.col-sm-8
+                  div#signin_msg(class=["alert","alert-danger"],role="alert",style="display: none;")
 
 block custscript
   script(type="text/javascript", src="/lib/jquery/jquery-1.11.1.min.js")
   script(type="text/javascript", src="/lib/bootstrap/3.3.0/js/bootstrap.min.js")
+  script(type="text/javascript", src="/app/login.js")

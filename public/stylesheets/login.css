@@ -17,6 +17,14 @@
 	position: relative;
 }
 
+#signinLoader {
+	padding-left: 10px;
+}
+#signinLoader img {
+	height: 34px;
+	vertical-align: middle;
+}
+
 .login_panel {
 	margin: auto;
 	position: absolute;
