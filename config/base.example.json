@@ -12,4 +12,9 @@
 			"server": "example.com"
 		}
 	}
+
+	"db": {
+		"host": "remotehost",
+		"port": 27017
+	}
 }

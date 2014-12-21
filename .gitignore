@@ -1,5 +1,7 @@
 node_modules/
-/config.json
+/config/base.json
+/config/production.json
+/config/development.json
 
 # ignore those project files
 /cscope.*

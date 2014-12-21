@@ -1,3 +1,4 @@
+var debug = global.mainDebug;
 var express = require('express');
 var nconf = require('nconf');
 var path = require('path');
@@ -8,6 +9,7 @@ var bodyParser = require('body-parser');
 var busboy = require('connect-busboy');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
+var persisterFactory = require('./modules/persister');
 
 /* get all routers */
 var indexRt = require('./routes/index');
@@ -19,6 +21,9 @@ var rest_usersRt = require('./routes/rest/users');
 
 /* create the express application */
 var app = express();
+
+/* create global persister */
+global.persister = persisterFactory(nconf.get('db'), function() {});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -79,7 +84,7 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
+if (nconf.get('NODE_ENV') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
