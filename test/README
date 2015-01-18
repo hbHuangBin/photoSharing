@@ -1,0 +1,4 @@
+test_db.js : unit test functions (based on nodeunit) for lib/db
+test_db.json : test data for test_db.js
+
+run.sh : call it to run the unittest
