@@ -24,29 +24,6 @@ function objectPartialCompare(objA, objB) {
   }
 }
 
-function dbInsert(doc, done) {
-  doc.insert(db, function (error, result) {
-    var errMsg = null;
-    
-    if (error) {
-      errMsg = "insert failed, error:" + error;
-    } else {
-      try {
-        objectPartialCompare(doc, result);
-      } catch (e) {
-        errMsg = "comparsion failed";
-      }
-    }
-
-    if (errMsg) {
-      done(errMsg);
-    } else {
-      done();
-    }
-  });
-
-}
-
 function dbInsert(db, constructor) {
 
   return function(doc, done) {
@@ -90,7 +67,13 @@ exports.createDB = function (test) {
 };
 
 exports.resource = {
-  insert : function (test) {
+  // setUp: function (callback) {
+  //   callback();
+  // },
+  // tearDown: function (callback) {
+  //   callback();
+  // },
+  insertTest : function (test) {
     var i,
         res = [];
 
@@ -102,32 +85,133 @@ exports.resource = {
     test.expect(1);
     async.each(res, dbInsert(db, Resource), 
                function (error) {
-                 test.ok(!error, "all the resources have been inserted successfully!");
+                 test.ok(!error, "not all resources have been inserted successfully!");
                  test.done();
                });
+  },
+  updateTest : function (test) {
+    var i,
+        resTest = data.res;
+
+    test.expect(8);
+    i = Math.round(Math.random() * 10) % resTest.length;
+    Resource.findOne(db, {'name' : resTest[i].name}, function (error, r1) {
+      test.strictEqual(error, null);// 1
+      test.strictEqual(r1 instanceof Resource, true); // 2
+
+      // new data
+      r1.name = r1.name + '_updateNameTest';
+      r1.url = r1.url + '_updateUrlTest';
+      r1.dimension =  new Dimension(r1.dimension.width + 1, r1.dimension.height + 1);
+
+      r1.update(db, function(error) {
+        test.strictEqual(error, null); // 3
+
+        Resource.findOne(db, {'name' : r1.name}, function (error, r2) {
+          test.strictEqual(error, null); // 4
+          test.strictEqual(r2 instanceof Resource, true); // 5
+          test.strictEqual(r1.name, r2.name); // 6
+          test.strictEqual(r1.url, r2.url); // 7
+          test.deepEqual(r1.dimension, r2.dimension); // 8
+
+          resTest[i] = r2;
+          test.done();
+        });
+      });
+    });
+  },
+  deleteTest : function (test) {
+    var i,
+        resTest = data.res;
+
+    test.expect(4);
+    i = Math.round(Math.random() * 10) % resTest.length;
+    Resource.findOne(db, {'name' : resTest[i].name}, function (error, r1) {
+      test.strictEqual(error, null); // 1
+      
+      r1.remove(db, function (error) {
+        test.strictEqual(error, null); // 2
+
+        Resource.findOne(db, {'name' : r1.name}, function (error, r2) {
+          test.strictEqual(error, null); // 3
+          // should be removed
+          test.strictEqual(r2, null);  // 4
+          test.done();
+        });
+      });
+    });
   }
 };
 
-// exports.groupInsert = function (test) {
-//   var i,
-//       group = [];
+exports.group = {
+  insertTest : function (test) {
+    var i,
+        group = [];
 
-//   for (i = 0; i < data.group.length; ++i) {
-//     group.push(new Group(testGroup[i].name, testGroup[i].description, testGroup[i].admin));
-//   }
+    for (i = 0; i < data.group.length; ++i) {
+      group.push(new Group(data.group[i].name, data.group[i].description, data.group[i].admin)); 
+    }
 
-//   for (i = 0; i < data.res.length; ++i) {
-//     res.push(new Resource(data.res[i].name, data.res[i].url, 
-//                           new Dimension(data.res[i].dimension.width, data.res[i].dimension.height)));
-//   }
+    test.expect(1);
+    async.each(group, dbInsert(db, Group), 
+               function (error) {
+                 test.ok(!error, "not all groups have been inserted successfully!");
+                 test.done();
+               });
+  },
+  updateTest : function (test) {
+    var i,
+        groupTest = data.group;
 
-//   test.expect(1);
-//   async.each(group, dbInsert, 
-//              function (error) {
-//                test.ok(!error, "all the resources have been inserted successfully!");
-//                test.done();
-//              });
-// };
+    test.expect(8);
+    i = Math.round(Math.random() * 10) % groupTest.length;
+    Group.findOne(db, {'name' : groupTest[i].name}, function (error, r1) {
+      test.strictEqual(error, null);// 1
+      test.strictEqual(r1 instanceof Group, true); // 2
+
+      // new data
+      r1.name = r1.name + '_updateNameTest';
+      r1.description = r1.description + '_updateDescriptionTest';
+      r1.admin = [1, 2];
+
+      r1.update(db, function(error) {
+        test.strictEqual(error, null); // 3
+
+        Group.findOne(db, {'name' : r1.name}, function (error, r2) {
+          test.strictEqual(error, null); // 4
+          test.strictEqual(r2 instanceof Group, true); // 5
+          test.strictEqual(r1.name, r2.name); // 6
+          test.strictEqual(r1.description, r2.description); // 7
+          test.deepEqual(r1.admin, r2.admin); // 8
+
+          groupTest[i] = r2;
+          test.done();
+        });
+      });
+    });
+  },
+  deleteTest : function (test) {
+    var i,
+        groupTest = data.group;
+
+    test.expect(4);
+    i = Math.round(Math.random() * 10) % groupTest.length;
+    Group.findOne(db, {'name' : groupTest[i].name}, function (error, r1) {
+      test.strictEqual(error, null); // 1
+      
+      r1.remove(db, function (error) {
+        test.strictEqual(error, null); // 2
+
+        Group.findOne(db, {'name' : r1.name}, function (error, r2) {
+          test.strictEqual(error, null); // 3
+          // should be removed
+          test.strictEqual(r2, null);  // 4
+          test.done();
+        });
+      });
+    });
+  }
+};
 
 exports.closeDB = function (test) {
   test.expect(1);
@@ -137,136 +221,3 @@ exports.closeDB = function (test) {
   test.done();
 };
 
-// exports.resourceInsert = function (test) {
-//   var i,
-//       res;
-
-//   for (i = 0; i < data.res.length; ++i) {
-//     res.push(data.res[i].name, data.res[i].url, 
-//              new Dimension(data.res[i].dimension.width, data.res[i].dimension.height));
-//   }
-
-//   async.each(res, function (o, callback) {
-    
-//   })
-// };
-//    assert = require('assert');
-
-// function objectPartialCompare(objA, objB) {
-//   var name,
-//       hasOwnProperty = Object.prototype.hasOwnProperty;
-  
-//   for (name in objA) {
-//     if (hasOwnProperty.call(objA, name) &&
-//         typeof objA[name] !== 'function') {
-//       assert.deepEqual(objA[name], objB[name]);
-//     }
-//   }
-
-// }
-
-// function insertAll (all, db) {
-//   var d,
-//       ret = [];
-
-//   d = all.shift();
-//   if (d !== undefined) {
-//     d.insert(db, function (error, result) {
-//       assert.equal(null, error);
-//       objectPartialCompare(d, result);
-
-//       ret.push(result);
-//       ret.concat(insertAll(all, db));
-//     });
-//   }
-
-//   return ret;
-// }
-
-// appDB.createDB(function (error, db) {
-//   var i,
-//       j,
-//       k,
-//       res = [],
-//       group = [],
-//       user = [],
-//       comment = [],
-//       groupResource = [],
-//       userResource = [],
-//       testRes = data.res,
-//       testGroup = data.group,
-//       testUser = data.user,
-//       dbRes,
-//       dbGroup,
-//       dbUser,
-//       dbComment,
-//       dbGroupResource,
-//       dbUserResource;
-
-//   assert.equal(null, error);
-  
-//   // Resource insertion test
-//   for (i = 0; i < testRes.length; ++i) {
-//     res.push(new Resource(testRes[i].name, testRes[i].url, 
-//                           new Dimension(testRes[i].dimension.width, 
-//                                         testRes[i].dimension.height)));
-//   }
-//   dbRes = insertAll(res, db);
-
-//   // Group insertion test
-//   for (i = 0; i < testGroup.length; ++i) {
-//     group.push(new Group(testGroup[i].name, testGroup[i].description, testGroup[i].admin));
-//   }
-//   dbGroup = insertAll(group, db);
-
-//   // User insertion test
-//   for (i = 0; i < testUser.length; ++i) {
-//     user.push(new User(testUser[i].name, testUser[i].admin, 
-//                        testGroup[i].group, testUser[i].followees));
-//   }
-//   dbUser = insertAll(user, db);
-  
-//   // Comment insertion test
-//   for (i = 0; i < res.length; ++i) {
-//     if (Array.isArray(res[i].comment)) {
-//       assert.equal(res[i].name, dbRes[i].name);
-//       for (j = 0; j < res[i].comment.length; ++j) {
-//         for (k = 0; k < dbUser.length; ++k) {
-//           if (res[i].comment[j].user === dbUser[k].name) {
-//             comment.push(new ResourceComment(dbRes[i]._id, dbUser[k]._id,
-//                                              res[i].comment[j].conntent, new Date()));
-//           }
-//         }
-//       }
-//     }
-//   }
-//   dbComment = insertAll(comment, db);
-
-//   // GroupResource insertion test
-//   for (i = 0; i < res.length; ++i) {
-//     if (Array.isArray(res[i].group)) {
-//       assert.equal(res[i].name, dbRes[i].name);
-//       for (j = 0; j < res[i].group.length; ++j) {
-//         for (k = 0; k < dbGroup.length; ++k) {
-//           if (res[i].group[j] === dbGroup[k].name) {
-//             groupResource.push(new GroupResource(dbGroup[k]._id, dbRes[i]._id, new Date()));            
-//           }
-//         }
-//       }
-//     }
-//   }
-//   dbGroupResource = insertAll(groupResource, db);
-
-//   // UserResource insertion test
-//   for (i = 0; i < res.length; ++i) {
-//     assert.equal(res[i].name, dbRes[i].name);    
-//     for (j = 0; j < dbUser.length; ++j) {
-//       if (dbUser[j].name === res[i].user) {
-//         userResource.push(new UserResource(dbUser[j]._id, dbRes[i]._id, new Date()));        
-//       }
-//     }
-//   }
-//   dbUserResource = insertAll(userResource, db);
-  
-//   appDB.closeDB(db);
-// });
