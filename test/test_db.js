@@ -194,7 +194,7 @@ exports.group = {
     var i,
         groupTest = data.group;
 
-    test.expect(4);
+    test.expect(5);
     i = Math.round(Math.random() * 10) % groupTest.length;
     Group.findOne(db, {'name' : groupTest[i].name}, function (error, r1) {
       test.strictEqual(error, null); // 1
@@ -203,6 +203,109 @@ exports.group = {
         test.strictEqual(error, null); // 2
 
         Group.findOne(db, {'name' : r1.name}, function (error, r2) {
+          test.strictEqual(error, null); // 3
+          // should be removed
+          test.strictEqual(r2, null);  // 4
+          r1.insert(db, function (error, r3) {
+            // insert it back
+            test.strictEqual(error, null); // 5
+            test.done();
+          });
+        });
+      });
+    });
+  }
+};
+
+exports.user = {
+  insertTest : function (test) {
+    test.expect(1);
+    async.each(data.user, 
+               function (u, eachCB) {
+                 async.map(u.group, 
+                           function (gName, mapCB) {
+                             // translate the group name to group ID
+                             Group.findOne(db, {'name' : gName}, function (error, g) {
+                               mapCB(error, error === null ? (g ? g._id : null) : null);
+                             });
+                           }, 
+                           function (err, results) {
+                             var newUser;
+
+                             newUser = new User(u.name, u.admin, results, u.followees);
+                             newUser.insert(db, function (err, dbUser) {
+                               if (err) {
+                                 eachCB('failed to insert ' + u.name + ' reason : ' + err);
+                                 return;
+                               } 
+
+                               if (!(dbUser instanceof User)) {
+                                 eachCB('the return value is not an instance of User : ' + u.name);
+                                 return;
+                               }
+
+                               try {
+                                 objectPartialCompare(newUser, dbUser);
+                               } catch (e) {
+                                 eachCB('user :' + u.name + ', comparision failed');
+                                 return;
+                               }
+
+                               eachCB();
+                             });
+                           });
+               }, 
+               function(err) {
+                 test.ok(!err, '' + err);
+                 test.done();
+               });
+  },
+  updateTest : function (test) {
+    var i,
+        userTest = data.user;
+
+    test.expect(9);
+    i = Math.round(Math.random() * 10) % userTest.length;
+    User.findOne(db, {'name' : userTest[i].name}, function (error, r1) {
+      test.strictEqual(error, null);// 1
+      test.strictEqual(r1 instanceof User, true); // 2
+
+      // new data
+      r1.name = r1.name + '_updateNameTest';
+      r1.admin = !r1.admin;
+      r1.group.push('updateGroupTest');
+      r1.followees = ['updateFolloweeTest'];
+
+      r1.update(db, function(error) {
+        test.strictEqual(error, null); // 3
+
+        User.findOne(db, {'name' : r1.name}, function (error, r2) {
+          test.strictEqual(error, null); // 4
+          test.strictEqual(r2 instanceof User, true); // 5
+          test.strictEqual(r1.name, r2.name); // 6
+          test.strictEqual(r1.admin, r2.admin); // 7
+          test.deepEqual(r1.group, r2.group); // 8
+          test.deepEqual(r1.followees, r2.followees); // 9
+
+          userTest[i] = r2;
+          test.done();
+        });
+      });
+    });
+  },
+  deleteTest : function (test) {
+    var i,
+        userTest = data.user;
+
+    test.expect(4);
+    i = Math.round(Math.random() * 10) % userTest.length;
+    User.findOne(db, {'name' : userTest[i].name}, function (error, r1) {
+      test.strictEqual(error, null); // 1
+      
+      r1.remove(db, function (error) {
+        test.strictEqual(error, null); // 2
+
+        User.findOne(db, {'name' : r1.name}, function (error, r2) {
           test.strictEqual(error, null); // 3
           // should be removed
           test.strictEqual(r2, null);  // 4
