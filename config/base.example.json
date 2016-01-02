@@ -11,10 +11,11 @@
 		"ldap": {
 			"server": "example.com"
 		}
-	}
+	},
 
 	"db": {
 		"host": "remotehost",
-		"port": 27017
+		"port": 27017,
+		"dbname": "dummyDbName"
 	}
 }
