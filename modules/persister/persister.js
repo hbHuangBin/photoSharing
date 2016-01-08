@@ -26,7 +26,7 @@ var factory = function(opts, readyCb) {
 			break;
 		}
 		default: {
-			readyCb(new Error('db type ['+opts.type+'] is not supported!'));
+			readyCb(new TypeError('db type ['+opts.type+'] is not supported!'));
 			return;
 		}
 	}
