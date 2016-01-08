@@ -1,9 +1,10 @@
+var util = require('util');
 var persisterDebug = require('debug')('persister');
 var mongodb = require('mongodb');
 
 var MongoClient = mongodb.MongoClient;
 
-function connectToDb(opts, callback) {
+function connectToMongodb(opts, callback) {
 	var connUrl = 'mongodb://' + opts.host + ':' + opts.port + '/' + opts.dbname;
 	MongoClient.connect(connUrl, {
 		db: {
@@ -11,16 +12,15 @@ function connectToDb(opts, callback) {
 		}
 	}, function(err, db) {
 		if (err) {
-			persisterDebug("Failed to connect to database!");
+			persisterDebug("Failed to connect to mongodb database!");
 			process.exit(-1);
 		}
-		persisterDebug("Connected to database %s", opts.dbname);
+		persisterDebug("Connected to mongodb database %s", opts.dbname);
 		callback(db);
 	});
 }
 
-var expConstructor = function(opts, readyCb) {
-	var persistor = {};
+var factory = function(opts, readyCb) {
 	var dbInst = null;
 
 	function isReady() {
@@ -28,12 +28,44 @@ var expConstructor = function(opts, readyCb) {
 		return true;
 	}
 
-	connectToDb(opts, function(db) {
+	/* currently only support mongodb, so it is only choice... */
+	connectToMongodb(opts, function(db) {
 		dbInst = db;
-		if (isReady()) { readyCb(); }
+		if (isReady()) {
+			readyCb(null, new MongoPersister(db, opts));
+		}
+		else {
+			readyCb(new Error("Failed to create persistor"));
+		}
 	});
-
-	return persistor;
 };
 
-module.exports = expConstructor;
+module.exports = factory;
+
+/**
+ * Base Persister
+ */
+function Persister (db, dbConnOpts, opClasses) {
+	this.db = db;
+	this.dbConnOpts;
+	this.opClasses = opClasses;
+}
+
+/**
+ * MongoPersister Class
+ */
+function MongoPersister (db, dbConnOpts) {
+	var base = 'db/mongodb/';
+	var objs = {
+		User: require(base + 'user'),
+		Group: require(base + 'group'),
+		Album: require(base + 'album'),
+		Resource: require(base + 'resource'),
+		ResourceComment: require(base + 'resourceComment'),
+		UserResourceRate: require(base + 'userResourceRate')
+	};
+
+	Persister.call(this, db, dbConnOpts, objs);
+}
+util.inherits(MongoPersister, Persister);
+

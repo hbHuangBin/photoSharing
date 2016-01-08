@@ -23,7 +23,16 @@ var rest_usersRt = require('./routes/rest/users');
 var app = express();
 
 /* create global persister */
-global.persister = persisterFactory(nconf.get('db'), function() {});
+persisterFactory(nconf.get('db'), function(err, persister) {
+	if (!err) {
+		/* register it as global */
+		global.persister = persister;
+	}
+	else {
+		/* fatal error */
+		debug('Fatal error: %s', err.message);
+	}
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
