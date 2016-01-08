@@ -9,3 +9,4 @@ data/
 /filenametags
 /tags
 /*.vim
+/*.taghl
