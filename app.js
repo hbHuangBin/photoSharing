@@ -31,6 +31,7 @@ persisterFactory(nconf.get('db'), function(err, persister) {
 	else {
 		/* fatal error */
 		debug('Fatal error: %s', err.message);
+		process.exit(-1);
 	}
 });
 

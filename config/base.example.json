@@ -14,6 +14,7 @@
 	},
 
 	"db": {
+		"type": "mongodb",
 		"host": "remotehost",
 		"port": 27017,
 		"dbname": "dummyDbName"
