@@ -1,3 +1,19 @@
+/**
+ * Variables registered in global scope for sharing and reusing:
+ *
+ * - serverRoot:
+ * - mainDebug:
+ * - eventbus:
+ * - persister:
+ * - authenticator:
+ *
+ *
+ * Global events emitted via eventbus:
+ *
+ * - persister_ready: (persister)
+ * - auth_ready: (authenticator)
+ */
+
 var debug = global.mainDebug;
 var express = require('express');
 var nconf = require('nconf');
@@ -10,6 +26,7 @@ var busboy = require('connect-busboy');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var persisterFactory = require('./modules/persister');
+var authFactory = require('./modules/auth');
 
 /* get all routers */
 var indexRt = require('./routes/index');
@@ -22,11 +39,29 @@ var rest_usersRt = require('./routes/rest/users');
 /* create the express application */
 var app = express();
 
+/* set the application as the bus of events */
+global.eventbus = app;
+
 /* create global persister */
 persisterFactory(nconf.get('db'), function(err, persister) {
 	if (!err) {
 		/* register it as global */
 		global.persister = persister;
+		global.eventbus.emit('persister_ready', persister);
+	}
+	else {
+		/* fatal error */
+		debug('Fatal error: %s', err.message);
+		process.exit(-1);
+	}
+});
+
+/* create global authenticator */
+authFactory(nconf.get('auth'), function(err, authenticator) {
+	if (!err) {
+		/* register it as global */
+		global.authenticator = authenticator;
+		global.eventbus.emit('auth_ready', authenticator);
 	}
 	else {
 		/* fatal error */

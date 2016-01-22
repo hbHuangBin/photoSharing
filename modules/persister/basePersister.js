@@ -1,31 +1,29 @@
-var debug = global.persisterDebug;
+var myutil = require('./moduleUtil');
 
 /**
  * Base Persister
  */
-function Persister (dbConnOpts, opClasses) {
-	this.db = null;	/* db should be initialized in init() invoking */
+function Persister (dbConnOpts, opClasses, callback) {
+	this.db = null;	/* db should be initialized when connect */
 	this.dbConnOpts = dbConnOpts;
 	this.opClasses = opClasses;
-}
 
-Persister.prototype.init = function(callback) {
 	var that = this;
 
 	/* connecting to the database and set the db instance */
 	this.connect(function(err, db) {
 		if (err) {
-			debug("Failed to connect to %s database: %s", that.dbConnOpts.type, err.message);
+			myutil.debug("Failed to connect to %s database: %s", that.dbConnOpts.type, err.message);
 			process.exit(-1);
 		}
 
-		debug("Connected to %s database %s", that.dbConnOpts.type, that.dbConnOpts.dbname);
+		myutil.debug("Connected to %s database %s", that.dbConnOpts.type, that.dbConnOpts.dbname);
 		that.db = db;
 		if (callback) {
 			callback.call(that);
 		}
 	});
-};
+}
 
 /* connectCb			- function(err, db)
  */

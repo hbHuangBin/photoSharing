@@ -1,7 +1,5 @@
 var util = require('util');
-var persisterDebug = require('debug')('persister');
-
-global.persisterDebug = persisterDebug;
+var myutil = require('./moduleUtil');
 
 /* include all types of persisters */
 var MongoPersister = require('./mongoPersister');
@@ -18,8 +16,8 @@ var factory = function(opts, readyCb) {
 				return;
 			}
 
-			persister = new MongoPersister(opts);
-			persister.init(function() {
+			persister = new MongoPersister(opts, function() {
+				myutil.debug('One mongodb persister is ready...');
 				readyCb(null, this);
 			});
 
