@@ -2,13 +2,8 @@
  * For testing auth module
  */
 
-var path = require('path');
-var EventEmitter = require('events');
-var moduleDir = '../../modules';
-var authFactory = require(path.join(moduleDir, 'auth'));
-var persisterFactory = require(path.join(moduleDir, 'persister'));
-
-global.eventbus = new EventEmitter();
+var authFactory = global.general.loadModule('auth');
+var persisterFactory = global.general.loadModule('persister');
 
 /**
  * Test DbAuthenticator
