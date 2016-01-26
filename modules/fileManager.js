@@ -65,10 +65,18 @@ util.inherits(FileManager, EventEmitter);
  */
 FileManager.prototype.input = function (fileName, encoding, mimeType, fileStream) {
 	var baseFileName = path.basename(fileName);
-	var saveTarget = path.join(this.getTmpUploadDir(), FileManager.genTmpFileName(baseFileName));
+	var saveTarget = path.join(this.getTmpUploadDir(), genTmpFileName(baseFileName));
 	var writeStream = fs.createWriteStream(saveTarget);
 	var that = this;
 
+	/**
+	 * @typedef {Object}	FileManager~FileInfo
+	 * @property {string}	name
+	 * @property {number}	size
+	 * @property {string}	encoding
+	 * @property {string}	mimeType
+	 * @property {string}	tempPath	- the path where the file is cached, it could be used to create read stream.
+	 */
 	/* gather file information */
 	var fileInfo = {
 		name: baseFileName,
@@ -101,6 +109,14 @@ FileManager.prototype.end = function () {
 	this.syncer.trigger('nomorefiles');
 };
 
+/**
+ * Get an array of cached file info.
+ * @return {FileManager~FileInfo[]}
+ */
+FileManager.prototype.getCacheInfoArray = function () {
+	return this.fileInfos.slice(0);
+};
+
 /*******************
  * Private functions
  */
@@ -108,6 +124,7 @@ FileManager.prototype.end = function () {
 /**
  * Compose the temporary directory path
  * @private
+ * @return {string}	abosolute directory path for temp uploaded files
  */
 FileManager.prototype.getTmpUploadDir = function () {
 	return path.join(os.tmpdir(), this.cacheDir);
