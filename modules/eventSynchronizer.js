@@ -1,10 +1,8 @@
 /**
  * Define Event Synchronizer
- * @module eventSynchronizer
- * @author nobelhuang
- * @license MIT
  */
 
+/***/
 var EventEmitter = require('events');
 var util = require('util');
 
@@ -12,12 +10,14 @@ var util = require('util');
  * Event Synchronizer, synchronize asynchronous events to perform consequent processing
  * after all conditions apply. Once all required events synced, {@link EventSynchronizer#event:synced} event
  * will be fired.
+ * @author nobelhuang
+ * @license MIT
+ *
  * @constructor
  * @extends EventEmitter
  */
 function EventSynchronizer() {
 
-	/** @private */
 	this.waitMap = {};
 
 	EventEmitter.call(this);
@@ -68,7 +68,7 @@ EventSynchronizer.prototype.waitFor = function() {
 
 		that.waitMap[event.event] = event;
 
-		that.on(event.event, countEvent);
+		that.on(event.event, that.countEvent);
 	});
 };
 
@@ -83,12 +83,12 @@ EventSynchronizer.prototype.trigger = function(eventName) {
 };
 
 /**
- * @this EventSynchronizer
+ * @private
  * @param {string}	eventName	- name of event to count
  *
  * @fires EventSynchronizer#synced
  */
-function countEvent(eventName) {
+EventSynchronizer.prototype.countEvent = function (eventName) {
 	var event = this.waitMap[eventName];
 
 	if (!event) {return;}

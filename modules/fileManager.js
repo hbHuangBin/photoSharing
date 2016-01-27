@@ -1,10 +1,8 @@
 /**
- * Utility Module for managing file inputing and caching for persisting
- * @module fileManager
- * @author nobelhuang
- * @license MIT
+ * Define FileManager
  */
 
+/***/
 var path = require('path');
 var fs = require('fs');
 var os = require('os');
@@ -16,18 +14,21 @@ var EventSynchronizer = require('./eventSynchronizer');
 
 
 /**
+ * Utility Class for managing file inputing and caching for persisting
+ * @author nobelhuang
+ * @license MIT
+ *
  * @constructor
  * @param {string}	cacheDir	- directory name for caching files under system temp directory
  * @extends EventEmitter
  */
 function FileManager (cacheDir) {
+	/** @public */
 	this.cacheDir = cacheDir;
 
 	var that = this;
 
-	/** @private */
 	this.fileInfos = [];
-	/** @private */
 	this.cachedNum = 0;
 
 	/* prepare for the caching */
@@ -38,7 +39,6 @@ function FileManager (cacheDir) {
 	}
 
 	/* initialize EventSynchronizer */
-	/** @private */
 	this.syncer = new EventSynchronizer();
 	this.syncer.waitFor('nomorefiles', {
 		event: 'onecached',
@@ -60,12 +60,16 @@ util.inherits(FileManager, EventEmitter);
 
 /**
  * Add new file input stream into the file manager, the stream will be read automatically after adding.
+ * @param {string}	fileName	- file name of input file, can include path
+ * @param {string}	encoding	- file encoding, e.g. "binary", "utf8"
+ * @param {string}	mimeType	- MIME type of file, e.g. "image/jpeg"
+ * @param {fs.ReadStream}	fileStrem	- ReadStream for the to cache file
  *
  * @fires FileManager#cacheready
  */
 FileManager.prototype.input = function (fileName, encoding, mimeType, fileStream) {
 	var baseFileName = path.basename(fileName);
-	var saveTarget = path.join(this.getTmpUploadDir(), genTmpFileName(baseFileName));
+	var saveTarget = path.join(this.getTmpUploadDir(), FileManager.genTmpFileName(baseFileName));
 	var writeStream = fs.createWriteStream(saveTarget);
 	var that = this;
 
@@ -132,12 +136,12 @@ FileManager.prototype.getTmpUploadDir = function () {
 
 
 /*******************
- * Utility inner functions
+ * Utility static functions
  */
 /**
  * Generate the temporary file name
  */
-function genTmpFileName(baseFileName) {
+FileManager.genTmpFileName = function (baseFileName) {
 	var shasum = crypto.createHash('sha1');
 	shasum.update(Math.ceil(Math.random() * 100000000) + baseFileName, 'binary');
 	return shasum.digest('hex').toUpperCase();

@@ -1,5 +1,6 @@
 /node_modules/
 data/
+/build/
 /config/base.json
 /config/production.json
 /config/development.json

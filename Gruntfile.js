@@ -1,5 +1,8 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
+		clean: {
+			jsdoc: ['build/doc-backend']
+		},
 		jasmine_nodejs: {
 			// task specific (default) options
 			options: {
@@ -31,10 +34,23 @@ module.exports = function(grunt) {
 					"test/helpers/**"
 				]
 			}
+		},
+		jsdoc: {
+			backend: {
+				src: ['modules/**/*.js'],
+				options: {
+					destination: 'build/doc-backend',
+					template: 'node_modules/jaguarjs-jsdoc-patched-2',
+					configure: 'config/jsdoc-conf.json'
+				}
+			}
 		}
 	});
 
+	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-jasmine-nodejs');
+	grunt.loadNpmTasks('grunt-jsdoc');
 
 	grunt.registerTask('default', ['jasmine_nodejs']);
+	grunt.registerTask('gen_docs', ['clean:jsdoc', 'jsdoc']);
 };
